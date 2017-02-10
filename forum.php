@@ -27,11 +27,26 @@ $modcachelist = array(
 );
 
 
-
-
+$mod = !in_array(C::app()->var['mod'], $modarray) ? 'index' : C::app()->var['mod'];
+define('CURMODULE', $mod);
+$cachelist = array();
+if(isset($modcachelist[CURMODULE])) {
+	$cachelist = $modcachelist[CURMODULE];
+	$cachelist[] = 'plugin';
+	$cachelist[] = 'pluginlanguage_system';
+}
+if(C::app()->var['mod'] == 'group') {
+	$_G['basescript'] = 'group';
+}
+C::app()->cachelist = $cachelist;
+C::app()->init();
+loadforum();
+set_rssauth();
+runhooks();
 
 
 
 
 $navtitle = str_replace('{bbname}', $_G['setting']['bbname'], $_G['setting']['seotitle']['forum']);
 $_G['setting']['threadhidethreshold'] = 1;
+require DISCUZ_ROOT.'./source/module/forum/forum_'.$mod.'.php';
