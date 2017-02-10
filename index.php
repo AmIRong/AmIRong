@@ -11,8 +11,8 @@ if(!empty($_SERVER['QUERY_STRING']) && is_numeric($_SERVER['QUERY_STRING'])) {
 		$_ENV['curapp'] = 'forum';
   } else {
     $_ENV['defaultapp'] = array('portal.php' => 'portal', 'forum.php' => 'forum', 'group.php' => 'group', 'home.php' => 'home');
-		$_ENV['hostarr'] = explode('.', $_SERVER['HTTP_HOST']);
-		$_ENV['domainroot'] = substr($_SERVER['HTTP_HOST'], strpos($_SERVER['HTTP_HOST'], '.')+1);
+	$_ENV['hostarr'] = explode('.', $_SERVER['HTTP_HOST']);
+	$_ENV['domainroot'] = substr($_SERVER['HTTP_HOST'], strpos($_SERVER['HTTP_HOST'], '.')+1);
     if(!empty($_ENV['domain']['app']) && is_array($_ENV['domain']['app']) && in_array($_SERVER['HTTP_HOST'], $_ENV['domain']['app'])) {
     			$_ENV['curapp'] = array_search($_SERVER['HTTP_HOST'], $_ENV['domain']['app']);
           if($_ENV['curapp'] == 'mobile') {
@@ -120,6 +120,25 @@ if(!empty($url)) {
 	require './'.$_ENV['curapp'].'.php';
 }
 
-global $_G;
-$holdmainarr
-$ishold
+function checkholddomain($domain) {
+	global $_G;
+	$domain = strtolower($domain);
+	if(preg_match("/^[^a-z]/i", $domain)) return true;
+	$holdmainarr = empty($_G['setting']['holddomain']) ? array('www') : explode('|', $_G['setting']['holddomain']);
+	$ishold = false;
+	foreach ($holdmainarr as $value) {
+		if(strpos($value, '*') === false) {
+			if(strtolower($value) == $domain) {
+				$ishold = true;
+				break;
+			}
+		} else {
+			$value = str_replace('*', '.*?', $value);
+			if(@preg_match("/$value/i", $domain)) {
+				$ishold = true;
+				break;
+			}
+		}
+	}
+	return $ishold;
+}
