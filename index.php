@@ -1,3 +1,4 @@
+<?php
 if(!empty($_SERVER['QUERY_STRING']) && is_numeric($_SERVER['QUERY_STRING'])) {
   $_ENV['curapp'] = 'home';
   $_GET = array('mod'=>'space', 'uid'=>$_SERVER['QUERY_STRING']);
@@ -142,3 +143,4 @@ function checkholddomain($domain) {
 	}
 	return $ishold;
 }
+?>
